@@ -1,29 +1,29 @@
-import { ServerResponse }        from 'http'
-import { readMaybeHeaderBuffer } from './read-maybe-header-buffer'
-import { writeBody }             from './write-body'
-import { writeHeader }           from './write-header'
+import { ServerResponse } from 'http'
+import { readMaybeHeaderBuffer } from './read-maybe-header-buffer.ts'
+import { writeBody } from './write-body.ts'
+import { writeHeader } from './write-header.ts'
 
-export function writeData (
-    chunk : Buffer ,
-    buffers : { header : Buffer[]; body : Buffer[], completedHeader : boolean } ,
-    res : ServerResponse
+export function writeData(
+    chunk: Buffer,
+    buffers: { header: Buffer[]; body: Buffer[], completedHeader: boolean },
+    res: ServerResponse
 ) {
-    if ( buffers.completedHeader ) {
-        res.write ( chunk )
+    if (buffers.completedHeader) {
+        res.write(chunk)
     }
     else {
-        buffers.completedHeader = readMaybeHeaderBuffer (
-            chunk ,
+        buffers.completedHeader = readMaybeHeaderBuffer(
+            chunk,
             buffers
         )
-        if ( buffers.completedHeader ) {
+        if (buffers.completedHeader) {
 
-            writeHeader (
-                buffers.header ,
+            writeHeader(
+                buffers.header,
                 res
             )
-            writeBody (
-                buffers.body ,
+            writeBody(
+                buffers.body,
                 res
             )
         }

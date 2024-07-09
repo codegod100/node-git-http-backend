@@ -1,67 +1,66 @@
 import {
-    IncomingHttpHeaders ,
+    IncomingHttpHeaders,
     IncomingMessage
-}                                      from 'http'
-import { setGitHttpBackendVariable }   from '../commands/set-git-http-backend-variable'
-import { mapHeadersToEnv }             from '../mapper/map-headers-to-env'
-import { gitHttpBackendVariableNames } from '../model/git-http-backend-variable-names'
-import { GitHttpBackendConfig }        from './model/config'
+} from 'http'
+import { setGitHttpBackendVariable } from '../commands/set-git-http-backend-variable.ts'
+import { mapHeadersToEnv } from '../mapper/map-headers-to-env.ts'
+import { gitHttpBackendVariableNames } from '../model/git-http-backend-variable-names.ts'
+import { GitHttpBackendConfig } from './model/config.ts'
 
 
-export default function defaultConfig ( gitBackendPath : string ,
-                                        projectRoot : string
+export default function defaultConfig(gitBackendPath: string,
+    projectRoot: string
 ) {
-    return function ( req : IncomingMessage ) : GitHttpBackendConfig {
+    return function (req: IncomingMessage): GitHttpBackendConfig {
 
-        const url = require ( 'url' )
-            .parse ( req.url )
+        const url = new URL(req.url, "http:localhost:3333")
 
 
-        const env = mapHeadersToEnv (
-            req.headers as IncomingHttpHeaders ,
+        const env = mapHeadersToEnv(
+            req.headers as IncomingHttpHeaders,
             gitHttpBackendVariableNames
         )
 
-        setGitHttpBackendVariable (
-            env ,
-            'GIT_PROJECT_ROOT' ,
+        setGitHttpBackendVariable(
+            env,
+            'GIT_PROJECT_ROOT',
             projectRoot
         )
 
-        setGitHttpBackendVariable (
-            env ,
-            'PATH_TRANSLATED' ,
+        setGitHttpBackendVariable(
+            env,
+            'PATH_TRANSLATED',
             projectRoot + url.pathname
         )
 
-        setGitHttpBackendVariable (
-            env ,
-            'PATH_INFO' ,
+        setGitHttpBackendVariable(
+            env,
+            'PATH_INFO',
             url.pathname
         )
 
 
-        setGitHttpBackendVariable (
-            env ,
-            'REQUEST_METHOD' ,
+        setGitHttpBackendVariable(
+            env,
+            'REQUEST_METHOD',
             req.method
         )
 
 
-        setGitHttpBackendVariable (
-            env ,
-            'GIT_HTTP_EXPORT_ALL' ,
+        setGitHttpBackendVariable(
+            env,
+            'GIT_HTTP_EXPORT_ALL',
             '1'
         )
 
-        setGitHttpBackendVariable (
-            env ,
-            'QUERY_STRING' ,
+        setGitHttpBackendVariable(
+            env,
+            'QUERY_STRING',
             url.query
         )
 
         return {
-            env ,
+            env,
             gitBackendPath
         }
     }
